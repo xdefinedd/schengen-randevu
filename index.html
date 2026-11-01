@@ -1,0 +1,263 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Schengen Randevu Linkleri</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wght@600;800&family=Source+Sans+3:wght@400;600;700&display=swap" rel="stylesheet">
+<style>
+:root {
+  /* Layout: 1. sayfa = arama + bayraklı ülke listesi; 2. sayfa (#ulke) = ülke ayrıntısı */
+  --bg: #F4F2F1;
+  --surface: #FFFFFF;
+  --ink: #1D1B22;
+  --muted: #6B6570;
+  --line: #E2DDDC;
+  --accent: #7A1F2B;      /* bordo pasaport */
+  --accent-ink: #FFFFFF;
+  --accent-soft: #F3E4E6;
+  --warn-bg: #FFF1D6; --warn-ink: #7A4B00;
+  --crit-bg: #FCE0DC; --crit-ink: #8E1B10;
+  --chip-bg: #ECE8E7;
+  --font-display: "Archivo", "Helvetica Neue", Arial, sans-serif;
+  --font-body: "Source Sans 3", -apple-system, "Segoe UI", Arial, sans-serif;
+  color-scheme: light;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #141216; --surface: #1E1B21; --ink: #F1EDEF; --muted: #A59DA6; --line: #322D35;
+    --accent: #C2485A; --accent-ink: #FFFFFF; --accent-soft: #3A1E24;
+    --warn-bg: #3B2C10; --warn-ink: #F5C76B; --crit-bg: #3E1A16; --crit-ink: #FF9C8F; --chip-bg: #2A262D;
+    color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --bg: #141216; --surface: #1E1B21; --ink: #F1EDEF; --muted: #A59DA6; --line: #322D35;
+  --accent: #C2485A; --accent-ink: #FFFFFF; --accent-soft: #3A1E24;
+  --warn-bg: #3B2C10; --warn-ink: #F5C76B; --crit-bg: #3E1A16; --crit-ink: #FF9C8F; --chip-bg: #2A262D;
+  color-scheme: dark;
+}
+* { box-sizing: border-box; }
+html, body { margin: 0; }
+body {
+  background: var(--bg); color: var(--ink);
+  font-family: var(--font-body); font-size: 16px; line-height: 1.4;
+  -webkit-text-size-adjust: 100%;
+}
+.wrap { max-width: 600px; margin: 0 auto; padding: 16px 16px 40px; display: flex; flex-direction: column; gap: 12px; }
+h1 { font-family: var(--font-display); font-weight: 800; font-size: 24px; letter-spacing: -0.01em; margin: 0; text-wrap: balance; }
+.sub { margin: 2px 0 0; color: var(--muted); font-size: 14px; }
+.sticky { position: sticky; top: 0; z-index: 5; background: var(--bg); padding: 8px 0; }
+.search {
+  width: 100%; font: inherit; font-size: 17px; padding: 12px 14px; border-radius: 12px;
+  border: 1px solid var(--line); background: var(--surface); color: var(--ink);
+}
+.search:focus-visible, a:focus-visible, button:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+
+/* 1. sayfa: liste */
+.list { display: flex; flex-direction: column; background: var(--surface); border: 1px solid var(--line); border-radius: 14px; overflow: hidden; }
+.row {
+  display: flex; align-items: center; gap: 14px; padding: 12px 14px; min-height: 58px;
+  text-decoration: none; color: var(--ink); border-top: 1px solid var(--line);
+}
+.row:first-child { border-top: 0; }
+.row:active { background: var(--accent-soft); }
+.flag { font-size: 30px; line-height: 1; width: 36px; text-align: center; flex: none; }
+.row .nm { flex: 1; font-weight: 700; font-size: 18px; }
+.chev { color: var(--muted); font-size: 22px; flex: none; }
+.empty { color: var(--muted); font-size: 15px; padding: 16px; }
+
+/* 2. sayfa: ayrıntı */
+.back {
+  align-self: flex-start; display: inline-flex; align-items: center; gap: 6px; text-decoration: none;
+  color: var(--accent); font-weight: 700; font-size: 16px; padding: 8px 0; min-height: 44px;
+}
+.hero { display: flex; align-items: center; gap: 14px; }
+.hero .flag { font-size: 48px; width: auto; }
+.hero h1 { font-size: 28px; }
+.chips { display: flex; flex-wrap: wrap; gap: 6px; }
+.chip { font-size: 13px; font-weight: 600; padding: 4px 9px; border-radius: 6px; background: var(--chip-bg); color: var(--ink); }
+.chip.warn { background: var(--warn-bg); color: var(--warn-ink); }
+.chip.crit { background: var(--crit-bg); color: var(--crit-ink); }
+.go {
+  display: flex; flex-direction: column; gap: 2px; text-decoration: none;
+  background: var(--accent); color: var(--accent-ink); border-radius: 14px; padding: 16px 18px; min-height: 64px;
+}
+.go strong { font-size: 19px; }
+.go small { font-size: 13px; opacity: 0.85; overflow-wrap: anywhere; }
+.sec { display: flex; flex-direction: column; gap: 8px; }
+.sec a {
+  display: flex; justify-content: space-between; align-items: center; gap: 8px; text-decoration: none;
+  color: var(--accent); background: var(--accent-soft); border-radius: 12px; padding: 12px 14px; font-weight: 700; font-size: 16px;
+}
+.sec a small { font-weight: 400; font-size: 12px; opacity: 0.9; }
+.facts { background: var(--surface); border: 1px solid var(--line); border-radius: 14px; padding: 4px 14px; margin: 0; }
+.facts div { padding: 10px 0; border-top: 1px solid var(--line); }
+.facts div:first-child { border-top: 0; }
+.facts dt { font-size: 12px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.05em; color: var(--muted); margin: 0 0 2px; }
+.facts dd { margin: 0; font-size: 15px; }
+footer { color: var(--muted); font-size: 12px; }
+[hidden] { display: none !important; }
+</style>
+</head>
+<body>
+<div class="wrap" id="home">
+  <div>
+    <h1>Schengen Randevu Linkleri</h1>
+    <p class="sub">29 ülke · Türkiye'den C tipi vize · son kontrol 1 Kasım 2026</p>
+  </div>
+  <div class="sticky">
+    <label for="q" style="position:absolute;left:-9999px">Ülke ara</label>
+    <input id="q" class="search" type="search" placeholder="Ülke ara" autocomplete="off">
+  </div>
+  <nav class="list" id="list" aria-label="Ülkeler"></nav>
+  <footer>Kurallar sık değişir; başvurudan önce resmi siteden teyit edin. Randevuyu yalnızca resmi sitelerden alın.</footer>
+</div>
+
+<div class="wrap" id="detail" hidden></div>
+
+<script>
+const V = c => "https://visa.vfsglobal.com/tur/tr/" + c;
+const DATA = [
+  { id: "almanya", cc: "DE", n: "Almanya", k: ["iDATA"], p: ["iDATA", "https://www.idata.com.tr"], s: [["Alman temsilcilikleri", "https://tuerkei.diplo.de"]], t: [["Bekleme listesi", "warn"]],
+    city: "İstanbul (Gayrettepe, Altunizade), Ankara, İzmir, Antalya, Bursa, Gaziantep, Trabzon", reg: "İkamet adresine göre yetkili temsilciliğin bölgesinden başvurulur.",
+    note: "Önce ücretsiz bekleme listesine kaydolun; randevu tarihi e-postayla atanır ve onaylanmalıdır. Kayıttan sonuca süreç 11 aya kadar uzayabiliyor." },
+  { id: "avusturya", cc: "AT", n: "Avusturya", k: ["VFS Global"], p: ["VFS Global", V("aut")], s: [], t: [],
+    city: "İstanbul (Altunizade, Beyoğlu), Ankara, Antalya, Bursa, Edirne, Gaziantep, İzmir, Trabzon", reg: "Bölge ayrımı yok; tüm VFS merkezlerine başvurulabilir.",
+    note: "VFS, bot ile alınan randevuları iptal edebiliyor." },
+  { id: "belcika", cc: "BE", n: "Belçika", k: ["VFS Global"], p: ["VFS Global", V("bel")], s: [["Visa on Web formu", "https://visaonweb.diplomatie.be"]], t: [],
+    city: "İstanbul (Beyoğlu, Altunizade), Ankara, İzmir, Bodrum ve diğer VFS merkezleri", reg: "Tüm başvuruları İstanbul Başkonsolosluğu değerlendirir.",
+    note: "Önce Visa on Web formunu doldurun, sonra VFS randevusu alın. Hizmet bedeli randevu alırken online ödenir; gelinmezse iade yok." },
+  { id: "bulgaristan", cc: "BG", n: "Bulgaristan", k: ["VFS Global"], p: ["VFS Global", V("bgr")], s: [], t: [],
+    city: "İstanbul, Ankara, İzmir, Bursa, Edirne ve diğer VFS merkezleri", reg: "Edirne Konsolosluğu Edirne, Tekirdağ ve Kırklareli için yetkili.",
+    note: "C vize VFS'den. D vize de 5 Ocak 2026'dan beri VFS randevusuyla Büyükelçiliğe. Kademeli çok girişli vizeyi uyguluyor." },
+  { id: "cekya", cc: "CZ", n: "Çekya", k: ["VFS Global"], p: ["VFS Global", V("cze")], s: [], t: [["Dönemsel bekleme listesi", "warn"]],
+    city: "İstanbul, Ankara, İzmir, Antalya", reg: "Kısa süreli vize VFS'ye, uzun süreli vize temsilciliğe.",
+    note: "Yoğun dönemlerde VFS bekleme listesi açılıyor; kayıt açılınca hızlı davranın." },
+  { id: "danimarka", cc: "DK", n: "Danimarka", k: ["VFS Global"], p: ["VFS Global", V("dnk")], s: [["Büyükelçilik bilgisi", "https://tyrkiet.um.dk/en/travel-and-residence/How-to-apply-for-a-visa"]], t: [],
+    city: "Ankara, Antalya, İstanbul, İzmir", reg: "Başvuru şahsen teslim edilir.",
+    note: "Büyükelçilik acente kullanmamayı açıkça öneriyor. İzlanda'yı da Danimarka temsil eder." },
+  { id: "estonya", cc: "EE", n: "Estonya", k: ["VFS Global"], p: ["VFS Global", V("est")], s: [], t: [],
+    city: "Ankara, İstanbul (Harbiye, Altunizade), İzmir, Antalya", reg: "Bölge ayrımı bildirilmemiş.",
+    note: "VFS'den yalnızca kısa süreli vizeye başvurulabiliyor." },
+  { id: "finlandiya", cc: "FI", n: "Finlandiya", k: ["VFS Global"], p: ["VFS Global", V("fin")], s: [], t: [],
+    city: "Ankara, İstanbul, Antalya, İzmir", reg: "İkamet ayrımı yok.", note: "" },
+  { id: "fransa", cc: "FR", n: "Fransa", k: ["VFS Global"], p: ["VFS Global", V("fra")], s: [["France-Visas formu", "https://france-visas.gouv.fr"]], t: [["Bekleme listesi", "warn"]],
+    city: "İstanbul, Ankara, İzmir, Gaziantep", reg: "Bekleme listesi dışındaki kategorilerde normal randevu sürüyor.",
+    note: "15 Ekim 2026'dan beri turistik ve özel ziyaret vizelerinde VFS bekleme listesi var. Tarih atanınca 3 gün içinde hizmet bedelini ödeyip onaylayın, yoksa randevu iptal olur." },
+  { id: "hirvatistan", cc: "HR", n: "Hırvatistan", k: ["VFS Global"], p: ["VFS Global", V("hrv")], s: [["Crovisa online formu", "https://crovisa.mvep.hr"]], t: [["Dönemsel bekleme listesi", "warn"]],
+    city: "İstanbul, Ankara, İzmir, Bursa ve diğer VFS merkezleri", reg: "Bölge ayrımı bildirilmemiş.",
+    note: "Önce online form, sonra VFS randevusu. Hizmet bedeli online, harç merkezde ödenir." },
+  { id: "hollanda", cc: "NL", n: "Hollanda", k: ["VFS Global"], p: ["VFS Global", V("nld")], s: [], t: [],
+    city: "8 ilde 9 VFS merkezi (İstanbul Beyoğlu ve Altunizade, Ankara, İzmir, Antalya vb.)", reg: "İkamet ilinden bağımsız, istediğiniz merkezi seçebilirsiniz.",
+    note: "Mayıs 2026'daki 'Hollanda VFS'yi bırakıyor' iddiası VFS tarafından yalanlandı." },
+  { id: "ispanya", cc: "ES", n: "İspanya", k: ["BLS International"], p: ["BLS International", "https://turkey.blsspainvisa.com"], s: [], t: [["Bölge ayrımı", ""]],
+    city: "İstanbul (Kağıthane), Ankara, İzmir, Antalya, Gaziantep", reg: "İstanbul Başkonsolosluğu bölgesi: İstanbul, İzmir, Antalya ofisleri. Ankara Büyükelçiliği bölgesi: Ankara, Gaziantep ofisleri.",
+    note: "BLS, WhatsApp'tan iletişim kurmadığını ve randevu satmadığını duyuruyor." },
+  { id: "isvec", cc: "SE", n: "İsveç", k: ["VFS Global"], p: ["VFS Global", V("swe")], s: [], t: [],
+    city: "İstanbul, Ankara, İzmir, Antalya", reg: "Konsolosluğa doğrudan başvuru yok.",
+    note: "Son 59 ay içinde parmak izi verdiğiniz bir Schengen vizeniz varsa şahsen gitmeniz gerekmeyebilir." },
+  { id: "isvicre", cc: "CH", n: "İsviçre", k: ["VFS Global"], p: ["VFS Global", V("che")], s: [], t: [],
+    city: "İstanbul (Esentepe – Astoria), Ankara", reg: "Ulusal (D) vize İstanbul Başkonsolosluğu'na.",
+    note: "Haziran 2025'ten beri VFS Global; eski TLScontact bilgileri geçersiz. Seyahatten en erken 6 ay, en geç 15 gün önce başvurun." },
+  { id: "italya", cc: "IT", n: "İtalya", k: ["iDATA"], p: ["iDATA", "https://www.idata.com.tr"], s: [["Prenot@Mi (konsolosluk sistemi)", "https://prenotami.esteri.it"]], t: [],
+    city: "İstanbul (Gayrettepe, Altunizade), Ankara, İzmir, Bursa, Gaziantep, Antalya, Trabzon, Adana", reg: "İkamet iline göre İstanbul, Ankara veya İzmir temsilciliğinin bölgesi.",
+    note: "Randevu iDATA'dan. VFS'nin eski İtalya sayfaları güncel değil. Prenot@Mi genelde ulusal vize içindir." },
+  { id: "izlanda", cc: "IS", n: "İzlanda", k: ["VFS Global"], p: ["VFS Global (Danimarka sayfası)", V("dnk")], s: [], t: [],
+    city: "Ankara, Antalya, İstanbul, İzmir (Danimarka VFS merkezleri)", reg: "Danimarka ile aynı.",
+    note: "Türkiye'de İzlanda'yı Danimarka Büyükelçiliği temsil ediyor." },
+  { id: "letonya", cc: "LV", n: "Letonya", k: ["VFS Global"], p: ["VFS Global", V("lva")], s: [], t: [],
+    city: "İstanbul (Beyoğlu), Ankara, İzmir, Antalya", reg: "Bölge ayrımı bildirilmemiş.", note: "Tüm vize türleri VFS'ye randevuyla." },
+  { id: "lihtenstayn", cc: "LI", n: "Lihtenştayn", k: ["VFS Global"], p: ["VFS Global (İsviçre sayfası)", V("che")], s: [], t: [["Teyit edin", "crit"]],
+    city: "İstanbul, Ankara (İsviçre VFS merkezleri)", reg: "İsviçre ile aynı.",
+    note: "Türkiye'de temsilciliği yok. İsviçre kanalından başvurulduğu bilgisi ikincil kaynaklara dayanıyor; önce teyit edin." },
+  { id: "litvanya", cc: "LT", n: "Litvanya", k: ["VFS Global"], p: ["VFS Global", V("ltu")], s: [], t: [],
+    city: "İstanbul, Ankara, İzmir, Antalya, Bursa, Edirne, Trabzon (yaklaşık 9 il)", reg: "Bölge ayrımı yok.",
+    note: "Büyükelçilik doğrudan başvuru almıyor; takip yalnızca VFS'den." },
+  { id: "luksemburg", cc: "LU", n: "Lüksemburg", k: ["VFS Global"], p: ["VFS Global", V("lux")], s: [["Ankara Büyükelçiliği", "https://ankara.mae.lu/en/service_citoyens/visa-to-luxembourg.html"]], t: [],
+    city: "İstanbul, Ankara, İzmir, Gaziantep", reg: "—",
+    note: "Büyükelçiliği telefonla arayıp oradan da randevu alabilirsiniz." },
+  { id: "macaristan", cc: "HU", n: "Macaristan", k: ["AS Visa"], p: ["AS Visa Solutions", "https://www.as-visa.com"], s: [], t: [],
+    city: "İstanbul (Beyoğlu – Polat Piyalepaşa), Ankara (Çankaya)", reg: "Bölge ayrımı bildirilmemiş.",
+    note: "Ofis önünde ücretli 'hizmet' sunanlara itibar etmeyin." },
+  { id: "malta", cc: "MT", n: "Malta", k: ["VFS Global"], p: ["VFS Global", V("mlt")], s: [], t: [],
+    city: "İstanbul, Ankara, İzmir, Trabzon ve diğer VFS merkezleri", reg: "İkamet fark etmeksizin herhangi bir merkez.",
+    note: "Harç merkezde nakit € ödenir; VFS hizmet bedeli 30 €." },
+  { id: "norvec", cc: "NO", n: "Norveç", k: ["VFS Global"], p: ["VFS Global", V("nor")], s: [["UDI başvuru portalı", "https://www.udi.no"]], t: [],
+    city: "Ankara, İstanbul, İzmir, Antalya", reg: "—",
+    note: "Bazı eski kaynaklar AS Visa yazıyor; Norveç Göç İdaresi'ne (UDI) göre VFS." },
+  { id: "polonya", cc: "PL", n: "Polonya", k: ["VFS Global"], p: ["VFS Global", V("pol")], s: [], t: [],
+    city: "İstanbul, Ankara, İzmir, Antalya", reg: "Müsaitliğe göre herhangi bir merkezden başvurulabilir.",
+    note: "3 Şubat 2026'dan beri randevu sisteminde 'turistik' ve 'tır şoförü' kategorileri var." },
+  { id: "portekiz", cc: "PT", n: "Portekiz", k: ["Aracı kurum yok", "AS Visa?"], p: ["VistosOnline", "https://pedidodevistos.mne.gov.pt/VistosOnline/"], s: [["Ankara Büyükelçiliği", "https://ancara.embaixadaportugal.mne.gov.pt/tr/"], ["AS Visa (İstanbul bölgesi?)", "https://www.as-visa.com"]], t: [["Teyit edin", "crit"]],
+    city: "Ankara (Büyükelçilik); İstanbul (AS Visa – teyit edin)", reg: "Kaynaklar çelişkili.",
+    note: "Resmi siteye göre başvuru VistosOnline'dan. İstanbul bölgesi için AS Visa kanalını Büyükelçiliğe sorun: sconsular.ankara@mne.pt" },
+  { id: "romanya", cc: "RO", n: "Romanya", k: ["Aracı kurum yok"], p: ["eViza portalı", "https://evisa.mae.ro"], s: [], t: [["Bölge ayrımı", ""]],
+    city: "Ankara, İstanbul, İzmir (Romanya temsilcilikleri)", reg: "İkamet iline göre temsilcilik (örn. İzmir: İzmir, Aydın, Muğla, Manisa, Denizli…).",
+    note: "Online başvuru yapılır; randevu günü sistem tarafından otomatik verilir." },
+  { id: "slovakya", cc: "SK", n: "Slovakya", k: ["BLS International"], p: ["Büyükelçilik sayfası (BLS linki)", "https://www.mzv.sk/web/ankara-en/visa-and-services/applying-in-turkiye"], s: [], t: [["Bölge ayrımı", ""]],
+    city: "İstanbul (Kağıthane), İzmir (Bornova), Ankara (Çankaya), Antalya (Muratpaşa)", reg: "Batı illeri (İstanbul, İzmir, Bursa, Muğla…) → İstanbul/İzmir. Diğer iller → Ankara/Antalya.",
+    note: "Bazı rehberler hâlâ VFS veya TLScontact yazıyor; resmi kaynak BLS. 2–3 ay önceden randevu önerilir." },
+  { id: "slovenya", cc: "SI", n: "Slovenya", k: ["VFS Global", "AS Visa"], p: ["VFS Global", V("svn")], s: [["AS Visa", "https://www.as-visa.com"]], t: [],
+    city: "VFS: Ankara, Antalya, Bursa, Gaziantep, İstanbul, İzmir · AS Visa: İstanbul, Ankara", reg: "Bölge ayrımı yok.",
+    note: "İki kanal var; hangisinde erken randevu varsa onu kullanabilirsiniz." },
+  { id: "yunanistan", cc: "GR", n: "Yunanistan", k: ["Kosmos", "VFS Global"], p: ["Kosmos Vize", "https://www.kosmosvize.com.tr"], s: [["VFS Global (İzmir bölgesi)", V("grc")]], t: [["Bölge ayrımı", ""]],
+    city: "Kosmos: İstanbul, Ankara, Bursa, Edirne, Gaziantep · VFS: İzmir, Antalya, Bodrum, Kuşadası, Çeşme, Ayvalık", reg: "İzmir, Antalya, Aydın, Muğla, Denizli, Manisa, Balıkesir, Afyon, Burdur, Isparta, Kütahya, Uşak → VFS. Diğer iller → Kosmos.",
+    note: "2025'te Türk vatandaşlarının en çok başvurduğu Schengen ülkesi. Kosmos randevuları çabuk doluyor." }
+];
+
+const flag = cc => String.fromCodePoint(...[...cc].map(c => 0x1F1E6 + c.charCodeAt(0) - 65));
+const norm = s => s.toLocaleLowerCase("tr").normalize("NFD").replace(/[̀-ͯ]/g, "").replace(/ı/g, "i");
+const esc = s => String(s).replace(/[&<>"]/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]));
+const host = u => { try { const x = new URL(u); if (x.host.includes("vfsglobal")) return "visa.vfsglobal.com · " + x.pathname.split("/").filter(Boolean).pop(); return x.host.replace(/^www\./, ""); } catch (e) { return u; } };
+
+const home = document.getElementById("home");
+const detail = document.getElementById("detail");
+const list = document.getElementById("list");
+const q = document.getElementById("q");
+
+function renderList() {
+  const s = norm(q.value.trim());
+  const shown = DATA.filter(d => !s || norm(d.n).includes(s));
+  list.innerHTML = shown.length
+    ? shown.map(d => `<a class="row" href="#${d.id}"><span class="flag" aria-hidden="true">${flag(d.cc)}</span><span class="nm">${esc(d.n)}</span><span class="chev" aria-hidden="true">›</span></a>`).join("")
+    : `<div class="empty">Eşleşen ülke yok.</div>`;
+}
+
+function renderDetail(d) {
+  const chips = d.k.map(k => `<span class="chip">${esc(k)}</span>`).join("") + d.t.map(([l, c]) => `<span class="chip ${c}">${esc(l)}</span>`).join("");
+  const sec = d.s.length ? `<div class="sec">${d.s.map(([l, u]) => `<a href="${u}" target="_blank" rel="noopener"><span>${esc(l)}</span><small>${esc(host(u))}</small></a>`).join("")}</div>` : "";
+  const facts = [["Başvuru şehirleri", d.city], ["Bölge kuralı", d.reg], ["Bilmeniz gereken", d.note]].filter(([, v]) => v && v !== "—");
+  detail.innerHTML = `
+    <a class="back" href="#">‹ Tüm ülkeler</a>
+    <div class="hero"><span class="flag" aria-hidden="true">${flag(d.cc)}</span><h1>${esc(d.n)}</h1></div>
+    <div class="chips">${chips}</div>
+    <a class="go" href="${d.p[1]}" target="_blank" rel="noopener"><strong>Randevu al · ${esc(d.p[0])}</strong><small>${esc(host(d.p[1]))}</small></a>
+    ${sec}
+    <dl class="facts">${facts.map(([k, v]) => `<div><dt>${k}</dt><dd>${esc(v)}</dd></div>`).join("")}</dl>
+    <footer>Son kontrol 1 Kasım 2026. Başvurudan önce resmi siteden teyit edin.</footer>`;
+}
+
+function route() {
+  const id = location.hash.replace(/^#/, "");
+  const d = DATA.find(x => x.id === id);
+  if (d) {
+    renderDetail(d);
+    home.hidden = true; detail.hidden = false;
+    document.title = d.n + " · Schengen Randevu";
+    window.scrollTo(0, 0);
+  } else {
+    detail.hidden = true; home.hidden = false;
+    document.title = "Schengen Randevu Linkleri";
+  }
+}
+
+q.addEventListener("input", renderList);
+window.addEventListener("hashchange", route);
+renderList();
+route();
+</script>
+</body>
+</html>
